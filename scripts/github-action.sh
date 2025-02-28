@@ -93,9 +93,8 @@ end_group(){
 }
 
 start_group "Download code coverage results from current run"
-
 # Fetch the first artifact with the prefix "artifacts-"
-gh run download "$GITHUB_RUN_ID" --pattern="artifacts-*" --dir="/tmp/gh-run-download-$GITHUB_RUN_ID"
+gh run download "$GITHUB_RUN_ID" --name="$COVERAGE_ARTIFACT_NAME" --dir="/tmp/gh-run-download-$GITHUB_RUN_ID"
 mv "/tmp/gh-run-download-$GITHUB_RUN_ID/$COVERAGE_FILE_NAME" $NEW_COVERAGE_PATH
 rm -r "/tmp/gh-run-download-$GITHUB_RUN_ID"
 end_group
@@ -107,7 +106,7 @@ if [ -z "$LAST_SUCCESSFUL_RUN_ID" ]; then
   exit 1
 fi
 
-gh run download "$LAST_SUCCESSFUL_RUN_ID" --name="$COVERAGE_ARTIFACT_NAME" --dir="/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID"
+gh run download "$LAST_SUCCESSFUL_RUN_ID" --pattern="artifacts-*" --dir="/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID"
 mv "/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID/$COVERAGE_FILE_NAME" $OLD_COVERAGE_PATH
 rm -r "/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID"
 end_group
