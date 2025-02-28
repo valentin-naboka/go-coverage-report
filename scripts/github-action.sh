@@ -93,20 +93,23 @@ end_group(){
 }
 
 start_group "Download code coverage results from current run"
-gh run download "$GITHUB_RUN_ID" --name="$COVERAGE_ARTIFACT_NAME" --dir="/tmp/gh-run-download-$GITHUB_RUN_ID"
-mv "/tmp/gh-run-download-$GITHUB_RUN_ID/$COVERAGE_FILE_NAME" $NEW_COVERAGE_PATH
+gh run download "$GITHUB_RUN_ID" --pattern="$COVERAGE_ARTIFACT_NAME" --dir="/tmp/gh-run-download-$GITHUB_RUN_ID"
+NEW_ARTIFACTS_NAME=$(ls /tmp/gh-run-download-$GITHUB_RUN_ID | head -n 1)
+mv "/tmp/gh-run-download-$GITHUB_RUN_ID/$NEW_ARTIFACTS_NAME/$COVERAGE_FILE_NAME" $NEW_COVERAGE_PATH
+
 rm -r "/tmp/gh-run-download-$GITHUB_RUN_ID"
 end_group
 
 start_group "Download code coverage results from target branch"
-LAST_SUCCESSFUL_RUN_ID=$(gh run list --status=success --branch="$TARGET_BRANCH" --workflow="$GITHUB_BASELINE_WORKFLOW" --event=push --json=databaseId --limit=1 -q '.[] | .databaseId')
+LAST_SUCCESSFUL_RUN_ID=$(gh run list --status=success --branch="$TARGET_BRANCH" --workflow="$GITHUB_BASELINE_WORKFLOW" --json=databaseId --limit=1 -q '.[] | .databaseId')
 if [ -z "$LAST_SUCCESSFUL_RUN_ID" ]; then
   echo "::error::No successful run found on the target branch"
   exit 1
 fi
 
-gh run download "$LAST_SUCCESSFUL_RUN_ID" --name="$COVERAGE_ARTIFACT_NAME" --dir="/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID"
-mv "/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID/$COVERAGE_FILE_NAME" $OLD_COVERAGE_PATH
+gh run download "$LAST_SUCCESSFUL_RUN_ID" --pattern="$COVERAGE_ARTIFACT_NAME" --dir="/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID"
+OLD_ARTIFACTS_NAME=$(ls /tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID | head -n 1)
+mv "/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID/$OLD_ARTIFACTS_NAME/$COVERAGE_FILE_NAME" $OLD_COVERAGE_PATH
 rm -r "/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID"
 end_group
 
