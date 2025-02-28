@@ -107,8 +107,8 @@ if [ -z "$LAST_SUCCESSFUL_RUN_ID" ]; then
 fi
 
 gh run download "$LAST_SUCCESSFUL_RUN_ID" --pattern="artifacts-*" --dir="/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID"
-OLD_COVERAGE_FILE_NAME=$(ls /tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID) | head -n 1
-mv "/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID/$OLD_COVERAGE_FILE_NAME" $OLD_COVERAGE_PATH
+OLD_ARTIFACTS_NAME=$(ls /tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID) | head -n 1
+mv "/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID/$OLD_ARTIFACTS_NAME/$COVERAGE_FILE_NAME" $OLD_COVERAGE_PATH
 rm -r "/tmp/gh-run-download-$LAST_SUCCESSFUL_RUN_ID"
 end_group
 
