@@ -93,9 +93,10 @@ end_group(){
 }
 
 start_group "Download code coverage results from current run"
-# Fetch the first artifact with the prefix "artifacts-"
-gh run download "$GITHUB_RUN_ID" --name="$COVERAGE_ARTIFACT_NAME" --dir="/tmp/gh-run-download-$GITHUB_RUN_ID"
-mv "/tmp/gh-run-download-$GITHUB_RUN_ID/$COVERAGE_FILE_NAME" $NEW_COVERAGE_PATH
+gh run download "$GITHUB_RUN_ID" --pattern="$COVERAGE_ARTIFACT_NAME" --dir="/tmp/gh-run-download-$GITHUB_RUN_ID"
+NEW_ARTIFACTS_NAME=$(ls /tmp/gh-run-download-$GITHUB_RUN_ID | head -n 1)
+mv "/tmp/gh-run-download-$GITHUB_RUN_ID/$NEW_ARTIFACTS_NAME/$COVERAGE_FILE_NAME" $NEW_COVERAGE_PATH
+
 rm -r "/tmp/gh-run-download-$GITHUB_RUN_ID"
 end_group
 
