@@ -95,16 +95,7 @@ end_group(){
 start_group "Download code coverage results from current run"
 
 # Fetch the first artifact with the prefix "artifacts-"
-TARGET_ARTIFACT_NAME=$(gh api repos/:owner/:repo/actions/runs/$RUN_ID/artifacts --jq '.artifacts[].name | select(startswith("artifacts-"))' | head -n 1)
-
-if [ -n "$TARGET_ARTIFACT_NAME" ]; then
-    echo "Found artifact: $TARGET_ARTIFACT_NAME"
-else
-    echo "No artifact found with prefix 'artifacts-'"
-    exit 1
-fi
-
-gh run download "$GITHUB_RUN_ID" --name="$TARGET_ARTIFACT_NAME" --dir="/tmp/gh-run-download-$GITHUB_RUN_ID"
+gh run download "$GITHUB_RUN_ID" --pattern="artifacts-*" --dir="/tmp/gh-run-download-$GITHUB_RUN_ID"
 mv "/tmp/gh-run-download-$GITHUB_RUN_ID/$COVERAGE_FILE_NAME" $NEW_COVERAGE_PATH
 rm -r "/tmp/gh-run-download-$GITHUB_RUN_ID"
 end_group
